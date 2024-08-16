@@ -1,7 +1,10 @@
 package Service;
 
+import java.util.List;
+
 import DAO.SocialMediaDAOImpl;
 import Model.Account;
+import Model.Message;
 
 public class SocialMediaService {
 
@@ -21,6 +24,27 @@ public class SocialMediaService {
         return newAccount;
     }
 
+    public Account logInUser(Account account){
+        Account LoggedInUser = socialMediaDAOImpl.loginUser(account);
+
+        return LoggedInUser;
+    }
+
+    public Message createMessage(Message message){
+        Message newMessage = socialMediaDAOImpl.createMessage(message);
+
+        return newMessage;
+    }
     
-    
+    public List<Message> getAllMessages(){
+        List<Message> messages = socialMediaDAOImpl.getAllMessages();
+
+        return messages;
+    }
+
+    public Message getOneMessage(int id){
+        Message message = socialMediaDAOImpl.getOneMessage(id);
+
+        return message;
+    }
 }

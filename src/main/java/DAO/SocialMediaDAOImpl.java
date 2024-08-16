@@ -53,6 +53,7 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
                     if (pkeyResultSet.next()) {
                         int generated_user_id = (int) pkeyResultSet.getLong(1);
+                        conn.close();
                         return new Account(generated_user_id, username, password);
                     }
                 }
@@ -62,7 +63,6 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
-
             return null;
         }
     }
@@ -87,6 +87,7 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
                 Account account = new Account(rs.getInt("account_id"), rs.getString("username"),
                         rs.getString("password"));
+                conn.close();
                 return account;
             }
 
@@ -134,9 +135,12 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
                     if (pkeyResultSet.next()) {
                         int generated_user_id = (int) pkeyResultSet.getLong(1);
+                        conn.close();
                         return new Message(generated_user_id, posted_by, message, time);
                     }
                 }
+
+                conn.close();
 
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -163,6 +167,8 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
                 messages.add(message);
             }
 
+            conn.close();
+
             return messages;
 
         } catch (SQLException e) {
@@ -184,8 +190,12 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
             ResultSet rs = ps.executeQuery();
 
-            if(rs.next()){
-                return new Message(message_id, rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
+            if (rs.next()) {
+                Message message = new Message(message_id, rs.getInt("posted_by"), rs.getString("message_text"),
+                        rs.getLong("time_posted_epoch"));
+                conn.close();
+
+                return message;
             }
 
         } catch (SQLException e) {
@@ -197,14 +207,87 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
     @Override
     public Message deleteMessage(int message_id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteMessage'");
+
+        try (Connection conn = Util.ConnectionUtil.getConnection()) {
+
+            String sql = "SELECT * FROM message WHERE message_id = ?";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, message_id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String del_sql = "DELETE FROM message WHERE message_id = ?";
+
+                PreparedStatement del_ps = conn.prepareStatement(del_sql);
+
+                del_ps.setInt(1, message_id);
+
+                del_ps.executeUpdate();
+
+                Message message = new Message(message_id, rs.getInt("posted_by"), rs.getString("message_text"),
+                        rs.getLong("time_posted_epoch"));
+                conn.close();
+
+                return message;
+            }
+
+            conn.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return new Message();
+
     }
 
     @Override
-    public Message updateMessage(int message_id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateMessage'");
+    public Message updateMessage(int message_id, Message message) {
+        String text = message.getMessage_text();
+
+        if (text == "" || text.length() >= 255) {
+            return null;
+        } else {
+
+            try (Connection conn = Util.ConnectionUtil.getConnection()) {
+
+                String sql = "SELECT * FROM message WHERE message_id = ?";
+
+                PreparedStatement ps = conn.prepareStatement(sql);
+
+                ps.setInt(1, message_id);
+
+                ResultSet rs = ps.executeQuery();
+
+                if(rs.next()){
+
+                    String updateSql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+
+                    PreparedStatement updateps = conn.prepareStatement(updateSql);
+
+                    updateps.setString(1, text);
+                    updateps.setInt(2, message_id);
+
+                    updateps.executeUpdate();
+
+                    Message newMessage = new Message(message_id, rs.getInt("posted_by"), text, rs.getLong("time_posted_epoch"));
+
+                    conn.close();
+
+                    return newMessage;
+
+                }
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+
+        return null;
     }
 
     @Override

@@ -26,7 +26,7 @@ public interface SocialMediaDAO {
     public Message deleteMessage(int message_id);
 
     // Update statement to update a message given message id
-    public Message updateMessage(int message_id);
+    public Message updateMessage(int message_id, Message message);
 
     // Select query to fetch all messages from a user given account id
     public List<Message> getAllMessagesFromUser();

@@ -47,4 +47,16 @@ public class SocialMediaService {
 
         return message;
     }
+
+    public Message deleteMessage(int id){
+        Message message = socialMediaDAOImpl.deleteMessage(id);
+
+        return message;
+    }
+
+    public Message updatMessage (int id, Message message){
+        Message newMessage = socialMediaDAOImpl.updateMessage(id, message);
+
+        return newMessage;
+    }
 }

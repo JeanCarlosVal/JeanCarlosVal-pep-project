@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 import Model.Account;
@@ -16,12 +17,12 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
         String username = newAccount.getUsername();
         String password = newAccount.getPassword();
 
-        if (username != "" || password.length() >= 4) {
+        if (username == "" || password.length() <= 3) {
             return null;
         } else {
             try (Connection conn = Util.ConnectionUtil.getConnection()) {
 
-                String checkUsernameExistSql = "Select username FROM account WHERE username = ?";
+                String checkUsernameExistSql = "SELECT username FROM account WHERE username = ?";
 
                 PreparedStatement checkps = conn.prepareStatement(checkUsernameExistSql);
 
@@ -32,7 +33,7 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
                 if (!userName.next()) {
                     String sql = "INSERT INTO account(username, password) VALUES(?,?)";
 
-                    PreparedStatement ps = conn.prepareStatement(sql);
+                    PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
                     ps.setString(1, username);
                     ps.setString(2, password);

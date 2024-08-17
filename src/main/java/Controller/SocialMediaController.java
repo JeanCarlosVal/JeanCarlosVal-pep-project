@@ -77,15 +77,15 @@ public class SocialMediaController {
     }
 
     private void getAllMessagesHandler(Context ctx) {
-        List<Message> allMessages= socialMediaService.getAllMessages();
+        List<Message> allMessages = socialMediaService.getAllMessages();
 
         ctx.json(allMessages);
     }
 
     private void getOneMessageHandler(Context ctx) {
         Message message = socialMediaService.getOneMessage(Integer.parseInt(ctx.pathParam("message_id")));
-        
-        if(message.message_text != null){
+
+        if (message.message_text != null) {
             ctx.json(message);
         }
     }
@@ -93,7 +93,7 @@ public class SocialMediaController {
     private void deleteOneMessageHandler(Context ctx) {
         Message message = socialMediaService.deleteMessage(Integer.parseInt(ctx.pathParam("message_id")));
 
-        if(message.message_text != null){
+        if (message.message_text != null) {
             ctx.json(message);
         }
     }
@@ -103,16 +103,19 @@ public class SocialMediaController {
         Message message = mapper.readValue(ctx.body(), Message.class);
         Message newMessage = socialMediaService.updatMessage(Integer.parseInt(ctx.pathParam("message_id")), message);
 
-        if(newMessage == null){
+        if (newMessage == null) {
             ctx.status(400);
-        }else {
+        } else {
             ctx.json(mapper.writeValueAsString(newMessage));
         }
-
 
     }
 
     private void getAllMessagesFromUserHandler(Context ctx) {
+
+        List<Message> allMessagesFromUser = socialMediaService.getAllMessagesFromUser(Integer.parseInt(ctx.pathParam("account_id")));
+
+        ctx.json(allMessagesFromUser);
 
     }
 }

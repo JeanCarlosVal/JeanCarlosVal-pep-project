@@ -10,53 +10,59 @@ public class SocialMediaService {
 
     SocialMediaDAOImpl socialMediaDAOImpl;
 
-    public SocialMediaService(){
+    public SocialMediaService() {
         socialMediaDAOImpl = new SocialMediaDAOImpl();
     }
 
-    public SocialMediaService(SocialMediaDAOImpl socialMediaDAOImpl){
+    public SocialMediaService(SocialMediaDAOImpl socialMediaDAOImpl) {
         this.socialMediaDAOImpl = socialMediaDAOImpl;
     }
 
-    public Account registerAccount(Account account){
+    public Account registerAccount(Account account) {
         Account newAccount = socialMediaDAOImpl.registerUser(account);
 
         return newAccount;
     }
 
-    public Account logInUser(Account account){
+    public Account logInUser(Account account) {
         Account LoggedInUser = socialMediaDAOImpl.loginUser(account);
 
         return LoggedInUser;
     }
 
-    public Message createMessage(Message message){
+    public Message createMessage(Message message) {
         Message newMessage = socialMediaDAOImpl.createMessage(message);
 
         return newMessage;
     }
-    
-    public List<Message> getAllMessages(){
+
+    public List<Message> getAllMessages() {
         List<Message> messages = socialMediaDAOImpl.getAllMessages();
 
         return messages;
     }
 
-    public Message getOneMessage(int id){
+    public Message getOneMessage(int id) {
         Message message = socialMediaDAOImpl.getOneMessage(id);
 
         return message;
     }
 
-    public Message deleteMessage(int id){
+    public Message deleteMessage(int id) {
         Message message = socialMediaDAOImpl.deleteMessage(id);
 
         return message;
     }
 
-    public Message updatMessage (int id, Message message){
+    public Message updatMessage(int id, Message message) {
         Message newMessage = socialMediaDAOImpl.updateMessage(id, message);
 
         return newMessage;
+    }
+
+    public List<Message> getAllMessagesFromUser(int userId) {
+        List<Message> newList = socialMediaDAOImpl.getAllMessagesFromUser(userId);
+
+        return newList;
     }
 }

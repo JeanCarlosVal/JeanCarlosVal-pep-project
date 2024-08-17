@@ -29,5 +29,5 @@ public interface SocialMediaDAO {
     public Message updateMessage(int message_id, Message message);
 
     // Select query to fetch all messages from a user given account id
-    public List<Message> getAllMessagesFromUser();
+    public List<Message> getAllMessagesFromUser(int userId);
 }

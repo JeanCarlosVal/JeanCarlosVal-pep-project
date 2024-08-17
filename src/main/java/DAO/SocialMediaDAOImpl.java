@@ -1,8 +1,5 @@
 package DAO;
 
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.longThat;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,11 +8,9 @@ import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ext.SqlBlobSerializer;
-
 import Model.Account;
 import Model.Message;
-import kotlin.time.MeasureTimeKt;
+
 
 public class SocialMediaDAOImpl implements SocialMediaDAO {
 
@@ -262,7 +257,7 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
                 ResultSet rs = ps.executeQuery();
 
-                if(rs.next()){
+                if (rs.next()) {
 
                     String updateSql = "UPDATE message SET message_text = ? WHERE message_id = ?";
 
@@ -273,7 +268,8 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
 
                     updateps.executeUpdate();
 
-                    Message newMessage = new Message(message_id, rs.getInt("posted_by"), text, rs.getLong("time_posted_epoch"));
+                    Message newMessage = new Message(message_id, rs.getInt("posted_by"), text,
+                            rs.getLong("time_posted_epoch"));
 
                     conn.close();
 
@@ -291,9 +287,33 @@ public class SocialMediaDAOImpl implements SocialMediaDAO {
     }
 
     @Override
-    public List<Message> getAllMessagesFromUser() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllMessagesFromUser'");
+    public List<Message> getAllMessagesFromUser(int userId) {
+
+        List<Message> newList = new LinkedList<>();
+
+        try (Connection conn = Util.ConnectionUtil.getConnection()) {
+
+            String sql = "SELECT * FROM message WHERE posted_by = ?";
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setInt(1, userId);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Message message = new Message(rs.getInt("message_id"), userId, rs.getString("message_text"),
+                        rs.getLong("time_posted_epoch"));
+                newList.add(message);
+            }
+
+            conn.close();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return newList;
     }
 
 }

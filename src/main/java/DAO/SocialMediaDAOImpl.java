@@ -11,7 +11,6 @@ import java.util.List;
 import Model.Account;
 import Model.Message;
 
-
 public class SocialMediaDAOImpl implements SocialMediaDAO {
 
     @Override
